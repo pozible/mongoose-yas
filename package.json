@@ -5,6 +5,11 @@
   "main": "index.js",
   "repository": "git@github.com:pozi-team/mongoose-yas.git",
   "author": "spondbob <spondbob@eamca.com>",
+  "keywords": [
+    "mongoose",
+    "slug",
+    "friendly slug"
+  ],
   "license": "MIT",
   "scripts": {
     "test": "mocha --exit"
