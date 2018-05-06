@@ -7,7 +7,7 @@
   "author": "spondbob <spondbob@eamca.com>",
   "license": "MIT",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --exit"
   },
   "dependencies": {
     "lodash.get": "^4.4.2",
