@@ -22,7 +22,7 @@ module.exports = function(schema, options) {
 
       const dataObj = await this.constructor.findOne(
         { ...scope, 'friendlySlugs.slug.base': slugBase },
-        {},
+        { friendlySlugs: 1 },
         { sort: { 'friendlySlugs.slug.index': -1 } }
       )
       const data = dataObj ? dataObj.toObject() : {}
