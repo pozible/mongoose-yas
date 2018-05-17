@@ -1,6 +1,6 @@
 {
   "name": "@pozible/mongoose-yas",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Mongoose Yet Another Slug",
   "main": "index.js",
   "repository": "git@github.com:pozi-team/mongoose-yas.git",
