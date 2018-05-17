@@ -7,12 +7,18 @@ module.exports = function(schema, options) {
     const target = slugFrom ? this[slugFrom] : this.title
     const slugBase = slug(target).toLowerCase()
 
-    if (get(this, 'friendlySlugs.slug.base') !== slugBase) {
+    if (get(this, 'friendlySlugs.slug.base') === slugBase) return
+
+    const getScope = () => {
       const distinctUpTo = get(schema, 'obj.slug.distinctUpTo') || []
-      const scope = distinctUpTo.reduce((obj, key) => {
+      return distinctUpTo.reduce((obj, key) => {
         obj[key] = this[key]
         return obj
       }, {})
+    }
+
+    const getIndex = async () => {
+      const scope = getScope()
 
       const dataObj = await this.constructor.findOne(
         { ...scope, 'friendlySlugs.slug.base': slugBase },
@@ -23,15 +29,20 @@ module.exports = function(schema, options) {
       const lastIndex = get(data, 'friendlySlugs.slug.index')
       const highestIndex = Number.isInteger(lastIndex) ? lastIndex : -1
 
-      const index = highestIndex >= 0 ? highestIndex + 1 : 0
-      const suffix = index > 0 ? `-${index}` : ``
+      return highestIndex >= 0 ? highestIndex + 1 : 0
+    }
 
-      this.slug = `${slugBase}${suffix}`
-      this.friendlySlugs = {
-        slug: {
-          base: slugBase,
-          index,
-        }
+    const getSuffix = async (index) => {
+      return index > 0 ? `-${index}` : ``
+    }
+
+    const index = await getIndex()
+    const suffix = await getSuffix(index)
+    this.slug = `${slugBase}${suffix}`
+    this.friendlySlugs = {
+      slug: {
+        base: slugBase,
+        index,
       }
     }
   })
