@@ -1,12 +1,17 @@
 const get = require('lodash.get')
 const slug = require('slug')
 
+const log = message => console.log('mongoose-yas:', message)
+
 module.exports = function(schema, options) {
+  log('loaded')
   schema.pre('save', async function() {
+    log('invoked on save')    
     const slugFrom = get(schema, 'obj.slug.slugFrom')
     const target = slugFrom ? this[slugFrom] : this.title
     const slugBase = slug(target).toLowerCase()
 
+    log(get(this, 'friendlySlugs.slug.base') + ' ' + slugBase)
     if (get(this, 'friendlySlugs.slug.base') === slugBase) return
 
     const getScope = () => {
