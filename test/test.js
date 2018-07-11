@@ -3,12 +3,12 @@ const slugGenerator = require('../.')
 const chai = require('chai')
 const should = chai.should()
 
-mongoose.connect('mongodb://localhost/mongoose-yas')
+mongoose.connect('mongodb://localhost:27017/mongoose-yas')
 
 const Schema = new mongoose.Schema({
   title: {type: String},
   friendlySlugs: Object,
-  publisher: {type: String},
+  publisher: {type: String, default: 'PUB_1'},
   slug: {type: String, slugFrom: 'title', distinctUpTo: ['publisher']},
 })
 Schema.plugin(slugGenerator)
@@ -45,7 +45,7 @@ describe('Normal usage', function () {
     })
   })
 
-  it('Creates a second slug', function (done) {
+  it('Adds a prefix to second slug', function (done) {
     Book.create({
       title: 'i ♥ unicode',
       publisher: 'PUB_1'
@@ -60,6 +60,37 @@ describe('Normal usage', function () {
         }
       })
       done()
+    })
+  })
+
+  it('Updates slug when title changed', function (done) {
+    const title = 'A new book'
+    const newTitle = 'An old book'
+
+    Book.create({
+      title: title,
+    }, function (err, doc) {
+      should.not.exist(err)
+      should.exist(doc)
+      doc.should.have.property('slug').and.equal('a-new-book')
+      doc.should.have.property('friendlySlugs').and.deep.equal({
+        slug: {
+          base: 'a-new-book',
+          index: 0,
+        }
+      })
+
+      doc.title = newTitle
+      doc.save(function (err, doc) {
+        doc.should.have.property('slug').and.equal('an-old-book')
+        doc.should.have.property('friendlySlugs').and.deep.equal({
+          slug: {
+            base: 'an-old-book',
+            index: 0,
+          }
+        })
+        done()
+      })
     })
   })
 })
