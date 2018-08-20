@@ -1,7 +1,20 @@
+[![npm (scoped)](https://img.shields.io/npm/v/@pozible/mongoose-yas.svg)](https://www.npmjs.com/package/@pozible/mongoose-yas)
 [![Build Status](https://travis-ci.org/pozi-team/mongoose-yas.svg?branch=master)](https://travis-ci.org/pozi-team/mongoose-yas)
 
 # mongoose-yas
-Mongoose Yet Another Slug, follows the same idea to create a slug based on [meteor-friendly-slugs](https://github.com/todda00/meteor-friendly-slugs).
+Mongoose Yet Another Slug, follows the same idea to create a slug based on [meteor-friendly-slugs](https://github.com/todda00/meteor-friendly-slugs). This package uses same API and data structure:
+
+```
+{
+  slug: 'your-slug', // Actual slug can be used in your app
+  friendSlugs: { // Should be used by the plugin only
+    slug: {
+      base: 'your-slug', // Slug result from `slugFrom` without index
+      index: 0, // Index of `slug` that is in the same `base`
+    }
+  }
+}
+```
 
 ## Usage
 
@@ -27,8 +40,8 @@ Book.create({
   console.log(book.slug)
 })
 ```
+**Important**: `slug` and `friendlySlugs` are required attributes that must be declared in schema.
 
 ## Limitations
-- Only generate a slug on create.
-- The 'slug' will always be stored in `slug` as it needs to be created in the schema with available options.
-- and a lot more.
+- Fixed `slug` and `friendlySlugs` attributes that must be declared in schema to make the plugin works.
+- and few other more.
