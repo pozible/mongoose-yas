@@ -94,3 +94,44 @@ describe('Normal usage', function () {
     })
   })
 })
+
+describe('Nested slugFrom usage', function () {
+  const Schema = new mongoose.Schema({
+    address: Object,
+    friendlySlugs: Object,
+    slug: {type: String, slugFrom: 'address.street'},
+  })
+  Schema.plugin(slugGenerator)
+  const Publisher = mongoose.model('Publisher', Schema)
+
+  before(function (done) {
+    Publisher.remove({}, function () {
+      done()
+    })
+  })
+
+  after(function (done) {
+    Publisher.remove({}, function () {
+      done()
+    })
+  })
+
+  it('Understands nested slugFrom ', function (done) {
+    Publisher.create({
+      address: {
+        street: 'A Random St',
+      },
+    }, function (err, doc) {
+      should.not.exist(err)
+      should.exist(doc)
+      doc.should.have.property('slug').and.equal('a-random-st')
+      doc.should.have.property('friendlySlugs').and.deep.equal({
+        slug: {
+          base: 'a-random-st',
+          index: 0,
+        }
+      })
+      done()
+    })
+  })
+})

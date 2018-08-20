@@ -44,7 +44,7 @@ const getQuery = (self, schema, slugBase) => {
 
 const getSlugBase = (self, schema) => {
   const slugFrom = get(schema, 'obj.slug.slugFrom')
-  const target = slugFrom ? self[slugFrom] : self.title
+  const target = slugFrom ? get(self, slugFrom) : self.title
   return slug(target).toLowerCase()
 }
 
