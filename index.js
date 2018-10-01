@@ -30,6 +30,11 @@ const queryLastIndex = (self, query) => {
   ).then(getIndex)
 }
 
+const generateSlug = (target) => {
+  slug.charmap['_'] = '-'
+  return slug(target, { lower: true })
+}
+
 const getIndex = (data) => {
   const lastIndex = get(data, 'friendlySlugs.slug.index')
   const highestIndex = Number.isInteger(lastIndex) ? lastIndex : -1
@@ -45,7 +50,7 @@ const getQuery = (self, schema, slugBase) => {
 const getSlugBase = (self, schema) => {
   const slugFrom = get(schema, 'obj.slug.slugFrom')
   const target = slugFrom ? get(self, slugFrom) : self.title
-  return slug(target).toLowerCase()
+  return generateSlug(target)
 }
 
 const getScope = (self, schema) => {

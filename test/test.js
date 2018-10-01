@@ -93,6 +93,24 @@ describe('Normal usage', function () {
       })
     })
   })
+
+  it('Replace underscore to dash', function (done) {
+    Book.create({
+      title: 'it_has_underscore',
+      publisher: 'PUB_1'
+    }, function (err, doc) {
+      should.not.exist(err)
+      should.exist(doc)
+      doc.should.have.property('slug').and.equal('it-has-underscore')
+      doc.should.have.property('friendlySlugs').and.deep.equal({
+        slug: {
+          base: 'it-has-underscore',
+          index: 0,
+        }
+      })
+      done()
+    })
+  })
 })
 
 describe('Nested slugFrom usage', function () {
