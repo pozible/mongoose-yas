@@ -1,5 +1,5 @@
 [![npm (scoped)](https://img.shields.io/npm/v/@pozible/mongoose-yas.svg)](https://www.npmjs.com/package/@pozible/mongoose-yas)
-[![Build Status](https://travis-ci.org/pozi-team/mongoose-yas.svg?branch=master)](https://travis-ci.org/pozi-team/mongoose-yas)
+[![Build Status](https://travis-ci.org/pozible/mongoose-yas.svg?branch=master)](https://travis-ci.org/pozible/mongoose-yas)
 
 # mongoose-yas
 Mongoose Yet Another Slug, follows the same idea to create a slug based on [meteor-friendly-slugs](https://github.com/todda00/meteor-friendly-slugs). This package uses same API and data structure:
