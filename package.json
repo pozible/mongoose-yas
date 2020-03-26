@@ -1,6 +1,6 @@
 {
   "name": "@pozible/mongoose-yas",
-  "version": "0.3.1",
+  "version": "0.5.0",
   "description": "Mongoose Yet Another Slug",
   "main": "index.js",
   "repository": "git@github.com:pozible/mongoose-yas.git",
@@ -21,6 +21,9 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "mocha": "^5.1.1",
-    "mongoose": "5.7.5"
+    "mongoose": "5.9.6"
+  },
+  "peerDependencies": {
+    "mongoose": "5.9.6"
   }
 }

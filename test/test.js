@@ -63,33 +63,65 @@ describe('Normal usage', function () {
     })
   })
 
-  it('Updates slug when title changed', function (done) {
-    const title = 'A new book'
-    const newTitle = 'An old book'
+  describe('Updates slug when title changed', function () {
+    it('Updates using doc.save', function (done) {
+      const title = 'A new book'
+      const newTitle = 'An old book'
 
-    Book.create({
-      title: title,
-    }, function (err, doc) {
-      should.not.exist(err)
-      should.exist(doc)
-      doc.should.have.property('slug').and.equal('a-new-book')
-      doc.should.have.property('friendlySlugs').and.deep.equal({
-        slug: {
-          base: 'a-new-book',
-          index: 0,
-        }
-      })
-
-      doc.title = newTitle
-      doc.save(function (err, doc) {
-        doc.should.have.property('slug').and.equal('an-old-book')
+      Book.create({
+        title: title,
+      }, function (err, doc) {
+        should.not.exist(err)
+        should.exist(doc)
+        doc.should.have.property('slug').and.equal('a-new-book')
         doc.should.have.property('friendlySlugs').and.deep.equal({
           slug: {
-            base: 'an-old-book',
+            base: 'a-new-book',
             index: 0,
           }
         })
-        done()
+
+        doc.title = newTitle
+        doc.save(function (err, doc) {
+          doc.should.have.property('slug').and.equal('an-old-book')
+          doc.should.have.property('friendlySlugs').and.deep.equal({
+            slug: {
+              base: 'an-old-book',
+              index: 0,
+            }
+          })
+          done()
+        })
+      })
+    })
+
+    it('Updates using updateOne/findOneAndUpdate', function (done) {
+      const title = 'Another book'
+      const newTitle = 'Another book version 2'
+
+      Book.create({
+        title: title,
+      }, function (err, doc) {
+        should.not.exist(err)
+        should.exist(doc)
+        doc.should.have.property('slug').and.equal('another-book')
+        doc.should.have.property('friendlySlugs').and.deep.equal({
+          slug: {
+            base: 'another-book',
+            index: 0,
+          }
+        })
+
+        Book.findOneAndUpdate({ _id: doc._id }, { $set: { title: newTitle } }, {new: true}, function (err, doc) {
+          doc.should.have.property('slug').and.equal('another-book-version-2')
+          doc.should.have.property('friendlySlugs').and.deep.equal({
+            slug: {
+              base: 'another-book-version-2',
+              index: 0,
+            }
+          })
+          done()
+        })
       })
     })
   })
