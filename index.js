@@ -53,7 +53,12 @@ function getQuery(schema, slugBase) {
   return Object.assign(scope, { 'friendlySlugs.slug.base': slugBase })
 }
 
-function getValueFromUpdate(slugFrom){ return get(this, `_update.$set.${slugFrom}`) }
+function getValueFromUpdate(slugFrom){
+  const fromNestedObject = get(this, `_update.$set.${slugFrom}`) // { foo: { bar: "baz"  } }
+  const fromDeepObject = get(this, ['_update', '$set', slugFrom]) // { "foo.bar": "baz" }
+  return fromNestedObject || fromDeepObject
+}
+
 function getSlugBaseValue(slugFrom) {
   if (slugFrom) return get(this, slugFrom) || getValueFromUpdate.bind(this)(slugFrom)
   return this.title || getValueFromUpdate.bind(this)('title')
