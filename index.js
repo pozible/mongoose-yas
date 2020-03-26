@@ -4,8 +4,10 @@ const slug = require('slug')
 module.exports = function(schema, options) {
   schema.pre(['save', 'updateOne', 'findOneAndUpdate'], function() {
     const self = this
+    const value = getValue(schema)
+    if (!value || value === '') return
+    
     const slugBase = getSlugBase.bind(this)(schema)
-
     if (get(this, 'friendlySlugs.slug.base') === slugBase || !slugBase) return
 
     const query = getQuery.bind(this)(schema, slugBase)
@@ -63,11 +65,13 @@ function getSlugBaseValue(slugFrom) {
   if (slugFrom) return get(this, slugFrom) || getValueFromUpdate.bind(this)(slugFrom)
   return this.title || getValueFromUpdate.bind(this)('title')
 }
-function getSlugBase(schema) {
+
+function getValue(schema) {
   const slugFrom = get(schema, 'obj.slug.slugFrom')
-  const target = getSlugBaseValue.bind(this)(slugFrom)
-  return generateSlug(target)
+  return getSlugBaseValue.bind(this)(slugFrom)
 }
+
+const getSlugBase = (target) => generateSlug(target)
 
 function getScope(schema) {
   const distinctUpTo = get(schema, 'obj.slug.distinctUpTo') || []
