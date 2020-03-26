@@ -4,7 +4,7 @@ const slug = require('slug')
 module.exports = function(schema, options) {
   schema.pre(['save', 'updateOne', 'findOneAndUpdate'], function() {
     const self = this
-    const value = getValue(schema)
+    const value = getValue.bind(this)(schema)
     if (!value || value === '') return
     
     const slugBase = getSlugBase.bind(this)(schema)
