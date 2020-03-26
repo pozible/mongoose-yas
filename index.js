@@ -7,7 +7,7 @@ module.exports = function(schema, options) {
     const value = getValue.bind(this)(schema)
     if (!value || value === '') return
     
-    const slugBase = getSlugBase.bind(this)(schema)
+    const slugBase = getSlugBase.bind(this)(value)
     if (get(this, 'friendlySlugs.slug.base') === slugBase || !slugBase) return
 
     const query = getQuery.bind(this)(schema, slugBase)
@@ -71,7 +71,7 @@ function getValue(schema) {
   return getSlugBaseValue.bind(this)(slugFrom)
 }
 
-const getSlugBase = (target) => generateSlug(target)
+const getSlugBase = (value) => generateSlug(value)
 
 function getScope(schema) {
   const distinctUpTo = get(schema, 'obj.slug.distinctUpTo') || []
