@@ -6,26 +6,29 @@ module.exports = function(schema, options) {
     const self = this
     const value = getValue.bind(this)(schema)
     if (!value || value === '') return
-    
+
     const slugBase = getSlugBase.bind(this)(value)
-    if (get(this, 'friendlySlugs.slug.base') === slugBase || !slugBase) return
+    if (checkSlugBaseDoesNotChange(this, slugBase) || !slugBase) return
 
     const query = getQuery.bind(this)(schema, slugBase)
-    return queryLastIndex.bind(this)(query).then(function(index) {
-      const suffix = getSuffix(index)
-      const slug = `${slugBase}${suffix}`
-      const friendlySlugs = {
-        slug: {
-          base: slugBase,
-          index,
+    return checkSlugBaseOnUpdate.bind(this)(slugBase).then(function(slugBaseDoesNotChange) {
+      if (slugBaseDoesNotChange) return
+      return queryLastIndex.bind(self)(query).then(function(index) {
+        const suffix = getSuffix(index)
+        const slug = `${slugBase}${suffix}`
+        const friendlySlugs = {
+          slug: {
+            base: slugBase,
+            index,
+          }
         }
-      }
-      if (['updateOne', 'findOneAndUpdate'].includes(self.op)) {
-        self._update.$set = Object.assign(self._update.$set, { slug, friendlySlugs })
-      } else {
-        self.slug = slug
-        self.friendlySlugs = friendlySlugs
-      }
+        if (['updateOne', 'findOneAndUpdate'].includes(self.op)) {
+          self._update.$set = Object.assign(self._update.$set, { slug, friendlySlugs })
+        } else {
+          self.slug = slug
+          self.friendlySlugs = friendlySlugs
+        }
+      })
     })
   })
 }
@@ -83,4 +86,16 @@ function getScope(schema) {
 
 const getSuffix = index => {
   return index > 0 ? `-${index}` : ``
+}
+
+const checkSlugBaseDoesNotChange = (obj, slugBase) => get(obj, 'friendlySlugs.slug.base') === slugBase
+
+function checkSlugBaseOnUpdate(slugBase) {
+  return new Promise(resolve => {
+    if (!['updateOne', 'findOneAndUpdate'].includes(this.op)) return resolve(false)
+    return this.model.findOne(this._conditions).then(data => {
+      const result = checkSlugBaseDoesNotChange(data, slugBase)
+      resolve(result)
+    })
+  })
 }
